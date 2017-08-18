@@ -10,9 +10,6 @@
     - Discover all Domain Controllers
     - Evaluate ATA on the DCs in regard to their audit settings
  
- .EXAMPLE
-  
-
   ATA v1.7 requires event ID 4776.  However, v1.8+ require more event ID's to augment
     ATA's ability to help protect the environment. As a result, ATA's Lieghtweight Gateway (LWGW)
     will automatically push events to the ATA Center. This process does not ensure the proper
@@ -28,7 +25,11 @@ param(
 
   [Parameter(Mandatory=$false)]
   [int]
-  $RunJobsThrottle = 10
+  $RunJobsThrottle = 10,
+
+  [Parameter(Mandatory=$false)]
+  [string]
+  $Fqdn = $null
 )
 
 $LiteralPath = Resolve-Path .
@@ -47,9 +48,6 @@ Else{
 }
 
 Start-Transcript -Path "$LiteralPath\Transcript\AtaPostDep-Transcript_$(get-date -Format "MM-dd-yyyy_hh.mm.ss").rtf" | Out-Null
-
-$DCScriptBlock = Resolve-Path .\HelperModules\DCScriptBlock.ps1 -ErrorAction Stop
-$AuditScript = Resolve-Path .\HelperModules\Get-AuditPolicyCompliance.psm1 -ErrorAction Stop
 
 Write-Output "Literal Path: $LiteralPath"
 Write-Host "[!!] Executing from: $LiteralPath" -ForegroundColor Yellow
@@ -89,12 +87,21 @@ foreach($partition in $partitions) {
   $DCs += $dcContainer.psbase.children
  }
 }
+[int]$DCCount = ($DCs.dNSHostName).Count
+Write-Host "`t[-] Discovered $DCCount Domain Controllers" -ForegroundColor Green
+
+# if given a Fqdn, only pull DCs from that domain
+if ($Fqdn){
+  Write-Host "`t[-] Filtering for DCs in: $Fqdn" -ForegroundColor Yellow
+  $DomainDN = "DC=$($Fqdn.replace(".",",DC="))"
+  $DCs = $DCs | Where-Object { $_.distinguishedName -match "OU=Domain Controllers,$DomainDN" }
+  [int]$DCCount = ($DCs.dNSHostName).Count
+  Write-Host "[+] Inspecting $DCCount Domain Controllers" -ForegroundColor Green
+}
+
 $DCs = $DCs.dNSHostName
 
-[int]$DCCount = $DCs.Count
 $i = 0
-Write-Host "`t[-] Discovered $DCCount Domain Controllers" -ForegroundColor Green
-Write-Host "[+] Inspecting DCs" -ForegroundColor Green
 
 $DcJobs = @()
 foreach  ($DC in $DCs){
