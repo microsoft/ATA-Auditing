@@ -2,7 +2,7 @@
 Understanding Audit Policy configuration is imperative for your Domain Controllers.  This includes Advanced Threat Analytics (ATA) as well.
 
 # Getting Started
-For explicit details on using this script, please refer [here](https//aka.ms/ataauditingblog).
+For explicit details on using this script, please refer [here](https://aka.ms/ataauditingblog).
 
 For default values (assess against v1.8, throttling with 10 concurrent processes):
     .\Measure-AtaDeployment.ps1
