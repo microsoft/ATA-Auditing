@@ -5,13 +5,19 @@ Understanding Audit Policy configuration is imperative for your Domain Controlle
 For explicit details on using this script, please refer [here](https://aka.ms/ataauditingblog).
 
 For default values (assess against v1.8, throttling with 10 concurrent processes):
+```PowerShell    
     .\Measure-AtaDeployment.ps1
+```
 
 To configure the throttling of the processes (i.e. not being run on a DC or from a well resourced machine), use the "RunJobsThrottle" parameter.  In this example, we set this paramter to 100:
+```PowerShell
     .\Measure-AtaDeployment.ps1 -RunJobsThrottle 100
+```
 
 To assess against ATA's v1.7, use the "AtaVersion" Parameter, which takes a *string* value:
+```PowerShell
     .\Measure-AtaDeployment.ps1 -AtaVersion "1.7"
+```
 
 # Getting Help
 For help please refer to the above blog.  In addition, when getting help, please include the Transcript file as illustrated in the blog post.
