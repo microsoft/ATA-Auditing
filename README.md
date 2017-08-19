@@ -14,9 +14,14 @@ To configure the throttling of the processes (i.e. not being run on a DC or from
     .\Measure-AtaDeployment.ps1 -RunJobsThrottle 100
 ```
 
-To assess against ATA's v1.7, use the "AtaVersion" Parameter, which takes a *string* value:
+To assess against ATA's v1.7, use the "AtaVersion" parameter, which takes a *string* value:
 ```PowerShell
     .\Measure-AtaDeployment.ps1 -AtaVersion "1.7"
+```
+
+To make the assessment against just one domain/child-domain, use the "Fqdn" parameter, as a *string* value:
+```PowerShell
+    .\Measure-AtaDeployment.ps1 -Fqdn "child.contoso.com"
 ```
 
 # Getting Help
