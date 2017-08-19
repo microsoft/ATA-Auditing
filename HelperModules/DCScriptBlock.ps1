@@ -12,6 +12,7 @@ param(
     [string]
     $AtaVersion
 )
+Import-Module $LiteralPath\HelperModules\Get-AuditPolicyCompliance.psm1 -Force -ErrorAction Stop
 
 Write-Host "`t[-] Inspecting $FqdnDc" -ForegroundColor Green
 <#
