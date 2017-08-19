@@ -68,7 +68,7 @@ Write-Host "`n
   ## ##      ##       ## ##   
  ##   ##     ##      ##   ##  
 ##     ##    ##     ##     ##   
-#########    ##     #########  POST-DEPLOYMENT Audit Setings
+#########    ##     #########        Audit Setings
 ##     ##    ##     ##     ##       Assessment Tool
 ##     ##    ##     ##     ##   
 `n`n`n"
