@@ -1,6 +1,12 @@
 # Introduction
 Understanding Audit Policy configuration is imperative for your Domain Controllers.  This includes Advanced Threat Analytics (ATA) as well.
 
+Fixes in recent versions:
+- Advanced Audit Settings now checks for both default value as well as explicitly setting registry value to '1'; logic bug
+
+New features in recent versions:
+- Ability to target a specific domain
+
 # Getting Started
 For explicit details on using this script, please refer [here](https://aka.ms/ataauditingblog).
 
