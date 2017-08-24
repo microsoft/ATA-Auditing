@@ -200,10 +200,10 @@ function Get-RemoteAdvancedAuditForcePolicy(){
         break 
     }
     $wmiResults = $wmi.GetDWORDValue($HKLM, $Key, $Value)
-    $auditpolforce = $wmiResults.ReturnValue #1 means on (good), 0 means off (bad); default value is 1 (2008+)
+    $auditpolforce = $wmiResults.uValue #1 or null means on (good), 0 means off (bad); default value is 1 (2008+)
 
     if ($auditpolforce -eq 0){ $auditpolforce = $false }
-    if ($auditpolforce -eq 1){ $auditpolforce = $true }
+    else { $auditpolforce = $true }
 
     return $auditpolforce
 }
