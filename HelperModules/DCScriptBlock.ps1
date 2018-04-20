@@ -9,6 +9,7 @@ param(
     $LiteralPath,
 
     [Parameter(Mandatory=$true, Position=2)]
+    [ValidateSet("AATP", "1.9", "1.8", "1.7")]
     [string]
     $Version
 )
@@ -29,25 +30,24 @@ $FqdnDc | Get-AuditPolSettings -ResultsFilePath "$AuditPolResultsFile"
 $auditPolStatus = Measure-AatpCompliance -Version $Version -AuditPolFile $AuditPolResultsFile
 
 #Service Discovery of LWGW/ATA Service
-[bool]$isLwgw = Get-RemoteAatpServiceStatus -ServerName $FqdnDc -Version $Version
+[bool]$isSensor = Get-RemoteAatpServiceStatus -ServerName $FqdnDc -Version $Version
 
 $overallStatus = ""
 if ($AdvancedAuditForce -eq $false){
     $overallStatus = "Advanced Audit Settings are not enforced.  This is against security best practices and should be fixed immediately. https://docs.microsoft.com/en-us/windows/device-security/security-policy-settings/audit-force-audit-policy-subcategory-settings-to-override"
 }
-elseif ($auditPolStatus.HighLevel -and $isLwgw){
+elseif ($auditPolStatus.HighLevel -and $isSensor){
     $overallStatus = "All is good :) Events are detected and being pushed to the ATA Center"
 }
-elseif ($auditPolStatus.HighLevel -and ($isLwgw -eq $false)) {
+elseif ($auditPolStatus.HighLevel -and ($isSensor -eq $false)) {
     $overallStatus = "Audit policies are good but not LWGW. Ensure events are forwarded via Windows Event Forwarding or SIEM. https://docs.microsoft.com/en-us/advanced-threat-analytics/install-ata-step6"
 }
-elseif (($auditPolStatus.HighLevel -eq $false) -and $isLwgw){
+elseif (($auditPolStatus.HighLevel -eq $false) -and $isSensor){
     $overallStatus = "Audit policies need attention for this LWGW."
 }
 else{
     $overallStatus = "Audit policies need attention and ensure events are forwarded via Windwos Event Forwarding or SIEM. https://docs.microsoft.com/en-us/advanced-threat-analytics/install-ata-step6"
 }
-
 
 $DCResults += New-Object psobject -Property @{
     DC_FQDN = $FqdnDc
@@ -55,7 +55,7 @@ $DCResults += New-Object psobject -Property @{
     AuditSettingsOverall = $auditPolStatus.HighLevel
     AuditSettingsCredVal = $auditPolStatus.Details.CredVal
     AuditSettingsSecGroupMgt = $auditPolStatus.Details.SecGroupMgmt
-    IsLWGW = $isLwgw
+    isSensor = $isSensor
     OverallStatus = $overallStatus
 }
 

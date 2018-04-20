@@ -76,6 +76,7 @@ Write-Host "`n
 Write-Host "[+] Starting ATA Post-Deployment Audit Settings Assessment Tool" -ForegroundColor Green
 Write-Host "[+] Environment successfully created" -ForegroundColor Green
 Write-Host "[+] Detecting Domain Controllers..." -ForegroundColor Green
+Write-Host "[!] Assessing Environment against version: $Version" -ForegroundColor Yellow
 
 $configurationContainer = ([adsi] "LDAP://RootDSE").Get("ConfigurationNamingContext")
 $partitions = ([adsi] "LDAP://CN=Partitions,$configurationContainer").psbase.children
@@ -121,9 +122,9 @@ $DCResults = Get-Job | Wait-Job | Receive-Job
 Write-Host "[+] Completed scans against reachable DCs" -ForegroundColor Green
 
 #Create CSV Output
-$DCResults | Select-Object DC_FQDN, OverallStatus, IsLWGW, AdvancedAuditForce, AuditSettingsOverall, AuditSettingsCredVal, AuditSettingsSecGroupMgt | `
+$DCResults | Select-Object DC_FQDN, OverallStatus, isSensor, AdvancedAuditForce, AuditSettingsOverall, AuditSettingsCredVal, AuditSettingsSecGroupMgt | `
   Export-Csv -Path "$LiteralPath\Results\Assessment-$(get-date -Format "MM-dd-yyyy").csv" -Encoding ASCII -NoTypeInformation
 
 Stop-Transcript
-$DCResults | Select-Object DC_FQDN, OverallStatus, IsLWGW, AuditSettingsOverall, AuditSettingsCredVal, AuditSettingsSecGroupMgt | Format-Table
+$DCResults | Select-Object DC_FQDN, OverallStatus, isSensor, AuditSettingsOverall, AuditSettingsCredVal, AuditSettingsSecGroupMgt | Format-Table
 Pause
