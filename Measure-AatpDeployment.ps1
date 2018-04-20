@@ -114,7 +114,7 @@ foreach  ($DC in $DCs){
   #this gets passed to only when RunJobs count is lower then threshold, thus we can start another!
   $i+=1
   $PercentComplete = $i / $DCCount * 100
-  $newjob = Start-Job -Name $DC -FilePath .\HelperModules\DCScriptBlock.ps1 -ArgumentList @($DC,$LiteralPath,$Version)
+  $newjob = Start-Job -Name $DC -FilePath .\HelperModules\DCScriptBlock.ps1 -ArgumentList @($DC, $LiteralPath, $Version)
   $DcJobs += $newjob
   Write-Progress -Activity "Querying Domain Controllers" -Status "Percentage complete: $PercentComplete" -PercentComplete $PercentComplete
 }

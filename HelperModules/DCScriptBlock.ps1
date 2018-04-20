@@ -27,7 +27,7 @@ $AdvancedAuditForce = Get-RemoteAdvancedAuditForcePolicy -ServerName $FqdnDc
 #Assess AuditPol settings
 $AuditPolResultsFile = "$LiteralPath\Results\$FqdnDc-$(get-date -Format "MM-dd").csv"
 $FqdnDc | Get-AuditPolSettings -ResultsFilePath "$AuditPolResultsFile"
-$auditPolStatus = Measure-AatpCompliance -Version $Version -AuditPolFile $AuditPolResultsFile
+$auditPolStatus = Measure-Compliance -AuditPolFile $AuditPolResultsFile -Version $Version
 
 #Service Discovery of LWGW/ATA Service
 [bool]$isSensor = Get-RemoteAatpServiceStatus -ServerName $FqdnDc -Version $Version

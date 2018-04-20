@@ -1,22 +1,16 @@
-function Measure-AatpCompliance() {
+function Measure-Compliance() {
     param(
-        # Version of ATA to be assessed against (i.e. "1.7", "1.8")
-        # Default version is 1.8
-        [Parameter(Mandatory=$false)]
-        [ValidateSet("1.8", "1.9", "1.7", "AATP")]
+        # Version
+        [Parameter(Mandatory=$true)]
         [string]
-        $Version="AATP",
+        $Version,
 
+        # Where to assess file
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [string]
         $AuditPolFile
     )
 
-    <#
-     .Description
-      ATA v1.8 requires Windows Event IDs:
-
-    #>
     switch ($Version) {
         "1.7" { Measure-AtaComplianceOneSeven -AuditPolFilePath $AuditPolFile}
         "1.8" { Measure-AatpCompliance -AuditPolFilePath $AuditPolFile} # same as AATP
