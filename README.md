@@ -1,39 +1,49 @@
 # Introduction
-Understanding Audit Policy configuration is imperative for your Domain Controllers.  This includes Advanced Threat Analytics (ATA) as well.
 
-Fixes in recent versions:
-- Advanced Audit Settings now checks for both default value as well as explicitly setting registry value to '1'; logic bug
+Understanding Audit Policy configuration is imperative for your Domain Controllers.  This includes Azure Advanced Threat Protection (AATP) and Advanced Threat Analytics (ATA).  Use this tool to ensure your DCs have the proper settings to maximize your detection capability.
 
-New features in recent versions:
+_**New features in recent versions:**_
+
+- Ability to support Azure ATP (AATP); this is the default value now
+- Ability to support ATA v1.9
 - Ability to target a specific domain
 
-# Getting Started
+## Getting Started
+
 For explicit details on using this script, please refer [here](https://aka.ms/ataauditingblog).
 
-For default values (assess against v1.8, throttling with 10 concurrent processes):
-```PowerShell    
-    .\Measure-AtaDeployment.ps1
+For default values (assess against Azure ATP (AAT), throttling with 10 concurrent processes):
+
+```PowerShell
+    .\Measure-AatpDeployment.ps1
 ```
 
 To configure the throttling of the processes (i.e. not being run on a DC or from a well resourced machine), use the "RunJobsThrottle" parameter.  In this example, we set this paramter to 100:
+
 ```PowerShell
-    .\Measure-AtaDeployment.ps1 -RunJobsThrottle 100
+    .\Measure-Aatpeployment.ps1 -RunJobsThrottle 100
 ```
 
-To assess against ATA's v1.7, use the "AtaVersion" parameter, which takes a *string* value:
+To assess against ATA's v1.9, use the "AtaVersion" parameter, which takes a *string* value:
+
 ```PowerShell
-    .\Measure-AtaDeployment.ps1 -AtaVersion "1.7"
+    .\Measure-AatpDeployment.ps1 -AtaVersion "1.9"
 ```
+
+This tool can assess ATA v1.9, 1.8 and 1.7.
 
 To make the assessment against just one domain/child-domain, use the "Fqdn" parameter, as a *string* value:
+
 ```PowerShell
-    .\Measure-AtaDeployment.ps1 -Fqdn "child.contoso.com"
+    .\Measure-AatpDeployment.ps1 -Fqdn "child.contoso.com"
 ```
 
-# Getting Help
+## Getting Help
+
 For help please refer to the above blog.  In addition, when getting help, please include the Transcript file as illustrated in the blog post.
 
-# Contributing
+## Contributing
+
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit https://cla.microsoft.com.

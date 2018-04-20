@@ -10,7 +10,7 @@ param(
 
     [Parameter(Mandatory=$true, Position=2)]
     [string]
-    $AtaVersion
+    $Version
 )
 Import-Module $LiteralPath\HelperModules\Get-AuditPolicyCompliance.psm1 -Force -ErrorAction Stop
 
@@ -26,10 +26,10 @@ $AdvancedAuditForce = Get-RemoteAdvancedAuditForcePolicy -ServerName $FqdnDc
 #Assess AuditPol settings
 $AuditPolResultsFile = "$LiteralPath\Results\$FqdnDc-$(get-date -Format "MM-dd").csv"
 $FqdnDc | Get-AuditPolSettings -ResultsFilePath "$AuditPolResultsFile"
-$auditPolStatus = Measure-AtaCompliance -AtaVersion $AtaVersion -AuditPolFile $AuditPolResultsFile
+$auditPolStatus = Measure-AatpCompliance -Version $Version -AuditPolFile $AuditPolResultsFile
 
 #Service Discovery of LWGW/ATA Service
-[bool]$isLwgw = Get-RemoteAtaServiceStatus -ServerName $FqdnDc
+[bool]$isLwgw = Get-RemoteAatpServiceStatus -ServerName $FqdnDc -Version $Version
 
 $overallStatus = ""
 if ($AdvancedAuditForce -eq $false){

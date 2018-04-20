@@ -1,10 +1,11 @@
-function Measure-AtaCompliance() {
+function Measure-AatpCompliance() {
     param(
         # Version of ATA to be assessed against (i.e. "1.7", "1.8")
         # Default version is 1.8
         [Parameter(Mandatory=$false)]
+        [ValidateSet("1.8", "1.9", "1.7", "AATP")]
         [string]
-        $AtaVersion="1.8",
+        $Version="AATP",
 
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [string]
@@ -16,9 +17,11 @@ function Measure-AtaCompliance() {
       ATA v1.8 requires Windows Event IDs:
 
     #>
-    switch ($AtaVersion) {
+    switch ($Version) {
         "1.7" { Measure-AtaComplianceOneSeven -AuditPolFilePath $AuditPolFile}
-        "1.8" { Measure-AtaComplianceOneEight -AuditPolFilePath $AuditPolFile }
+        "1.8" { Measure-AatpCompliance -AuditPolFilePath $AuditPolFile} # same as AATP
+        "1.9" { Measure-AatpCompliance -AuditPolFilePath $AuditPolFile} # same as AATP
+        "AATP" { Measure-AatpCompliance -AuditPolFilePath $AuditPolFile}
         Default {
             Write-Error -Message "Incorrect ATA Version passed. Default value is 1.8. Possible Overrides:`n - 1.7`n- 1.8" -ErrorAction exit
         }
@@ -67,7 +70,7 @@ function Measure-AtaComplianceOneSeven(){
     }
 }
 
-function Measure-AtaComplianceOneEight(){
+function Measure-AatpCompliance(){
     <#    
     .DESCRIPTION
     We need:
@@ -78,6 +81,8 @@ function Measure-AtaComplianceOneEight(){
         - 4733 (Account Management > Audit Security Group Management)
         - 4756 (Account Management > Audit Security Group Management)
         - 4757 (Account Management > Audit Security Group Management)
+
+        Note that 7045 can't be audited as its a SCM audit and now a Windows auditable event
     
         Need to check policy for GLOBAL setting (i.e. Account Management as well as the specific Sub Gategory)
 
@@ -208,7 +213,7 @@ function Get-RemoteAdvancedAuditForcePolicy(){
     return $auditpolforce
 }
 
-function Get-RemoteAtaServiceStatus(){
+function Get-RemoteAatpServiceStatus(){
     <#
     .SYNOPSIS
     Checks to see if the computer has the ATA Lieghtweight Gateway (LWGW) installed
@@ -218,9 +223,24 @@ function Get-RemoteAtaServiceStatus(){
         # Server name
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [string]
-        $ServerName
+        $ServerName,
+
+        # Version
+        [Parameter(Mandatory=$true)]
+        [ValidateSet("1.7", "1.8", "1.9", "AATP")]
+        [string]
+        $Version
     )
-    $Lwgw = (Get-WmiObject Win32_Service -ComputerName $ServerName -Filter "name='ATAGateway'")
-    If ($Lwgw){return $true}
-    Else { return $false }
+    # for ATA
+    if ($Version -ne "AATP"){
+        $Lwgw = (Get-WmiObject Win32_Service -ComputerName $ServerName -Filter "name='ATAGateway'")
+        if ($Lwgw) { return $true }
+        else { return $false }
+    }
+    # for Azure ATP
+    else{
+        $Sensor = (Get-WmiObject Win32_Service -ComputerName $ServerName -Filter "name='AATPSensor'")
+        if ($Sensor) { return $true }
+        else { return $false }
+    }
 }

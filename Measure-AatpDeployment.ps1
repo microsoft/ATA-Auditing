@@ -1,5 +1,5 @@
 <#
- .Version: 1.0
+ .Version: 1.5
  .Author: Andrew Harris
  .Twitter: ciberresponce
  .Email: aharri@microsoft.com
@@ -8,20 +8,21 @@
  .Description
   This script will:
     - Discover all Domain Controllers
-    - Evaluate ATA on the DCs in regard to their audit settings
+    - Evaluate Azure ATP or ATA on the DCs in regard to their audit settings
  
-  ATA v1.7 requires event ID 4776.  However, v1.8+ require more event ID's to augment
+  ATA v1.7 requires event ID 4776.  However, v1.8+ and Azure ATP require more event ID's to augment
     ATA's ability to help protect the environment. As a result, ATA's Lieghtweight Gateway (LWGW)
     will automatically push events to the ATA Center. This process does not ensure the proper
     Advanced Audit settings are turned on for the respective DCs. In addition, this process is not
     automated for DC's whose traffic is covered by a Gateway (and not a LWGW)
 #>
 
-# ATA Version to Test Against
+# Version to test against
 param(
   [Parameter(Mandatory=$false)]
+  [ValidateSet("1.9", "1.8", "1.7", "AATP")]
   [string]
-  $AtaVersion = "1.8",
+  $Version = "AATP",
 
   [Parameter(Mandatory=$false)]
   [int]
@@ -76,7 +77,6 @@ Write-Host "[+] Starting ATA Post-Deployment Audit Settings Assessment Tool" -Fo
 Write-Host "[+] Environment successfully created" -ForegroundColor Green
 Write-Host "[+] Detecting Domain Controllers..." -ForegroundColor Green
 
-$hostEntry=New-Object -TypeName System.Net.IPHostEntry
 $configurationContainer = ([adsi] "LDAP://RootDSE").Get("ConfigurationNamingContext")
 $partitions = ([adsi] "LDAP://CN=Partitions,$configurationContainer").psbase.children
 $DCs = @()
@@ -113,7 +113,7 @@ foreach  ($DC in $DCs){
   #this gets passed to only when RunJobs count is lower then threshold, thus we can start another!
   $i+=1
   $PercentComplete = $i / $DCCount * 100
-  $newjob = Start-Job -Name $DC -FilePath .\HelperModules\DCScriptBlock.ps1 -ArgumentList @($DC,$LiteralPath,$AtaVersion)
+  $newjob = Start-Job -Name $DC -FilePath .\HelperModules\DCScriptBlock.ps1 -ArgumentList @($DC,$LiteralPath,$Version)
   $DcJobs += $newjob
   Write-Progress -Activity "Querying Domain Controllers" -Status "Percentage complete: $PercentComplete" -PercentComplete $PercentComplete
 }
