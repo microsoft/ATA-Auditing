@@ -65,13 +65,13 @@ Import-Module .\HelperModules\Get-AuditPolicyCompliance.psm1
 $Host.UI.RawUI.WindowTitle = "$($Host.UI.RawUI.WindowTitle.split(':')[0]) : ATA Post-Deployment Compliance Measurement"
 
 Write-Host "`n
-   ###    ########     ###         
-  ## ##      ##       ## ##   
- ##   ##     ##      ##   ##  
-##     ##    ##     ##     ##   
-#########    ##     #########        Audit Setings
-##     ##    ##     ##     ##       Assessment Tool
-##     ##    ##     ##     ##   
+   ###        ###    ########## #######           
+  ## ##      ## ##       ##     ##    ##    
+ ##   ##    ##   ##      ##     ##   ###
+##     ##  ##     ##     ##     ######  
+#########  #########     ##     ##        DC Advanced Audit Setings
+##     ##  ##     ##     ##     ##            Assessment Tool
+##     ##  ##     ##     ##     ##            
 `n`n`n"
 Write-Host "[+] Starting ATA Post-Deployment Audit Settings Assessment Tool" -ForegroundColor Green
 Write-Host "[+] Environment successfully created" -ForegroundColor Green
@@ -100,7 +100,7 @@ if ($Fqdn){
   Write-Host "[+] Inspecting $DCCount Domain Controllers" -ForegroundColor Green
 }
 
-$DCs = $DCs.dNSHostName
+$DCs = @($DCs.dNSHostName)
 
 $i = 0
 
